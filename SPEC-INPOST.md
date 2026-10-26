@@ -56,17 +56,25 @@ Simplify toggle.
 | --- | --- | --- |
 | Get Events | `GET /tracking/v1/parcels` | Tracking Numbers (comma-separated, at most 10 per request → `trackingNumbers`). Option: Event Version (`x-inpost-event-version` header; empty = latest) |
 
-Notes:
+Notes (checked in `tracking-v1.json` on 2026-10-26):
 
 - Tracking data is kept for 121 days.
-- Check how the API expects several numbers (a repeated `trackingNumbers`
-  parameter or one comma-separated value) and set the request's array format
-  to match.
-- Output one n8n item per parcel. Confirm the root shape of the 200 response
-  in the spec; each parcel carries `trackingNumber`, `status`, `events`,
-  `origin`, `destination`, `delivery`, `shipment`, `returnToSender` and
-  `deliveryTimeWindow`.
+- `trackingNumbers` is an array query parameter with the OpenAPI default
+  (form, explode), so several numbers go as a repeated parameter:
+  `?trackingNumbers=A&trackingNumbers=B`. The node sends them with
+  `arrayFormat: repeat` and stops with a clear message above 10 numbers.
+- Root shape conflict in the spec: the 200 schema is an array of
+  `{ parcels: [...] }`, while the example is a single `{ parcels: [...] }`.
+  The node accepts both and outputs one item per parcel. Confirm on stage.
+- Each parcel has 9 fields (`trackingNumber`, `status`, `events`,
+  `origin`, `destination`, `delivery`, `shipment`, `returnToSender`,
+  `deliveryTimeWindow`), so no Simplify toggle is needed. `status` (parcel
+  and event) is filled only on the UK market; elsewhere use `eventCode`.
+  Location `type`: `LOCKER_POINT`, `LOGISTIC_CENTER`, `PUDO_POINT`,
+  `ADDRESS`, `MPOK_POINT`.
+- Errors use RFC 9457 problem details (`type`, `title`, `status`, `detail`).
 - Event codes: https://developers.inpost-group.com/tracking-events
+- To check on stage: what an unknown tracking number returns.
 
 ### 3.3 Shipment — Shipping API v2
 

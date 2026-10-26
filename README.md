@@ -34,7 +34,15 @@ Parcel lockers (APM) and ParcelPoints (PUDO) from the InPost Location API. Needs
 
 All Point operations return one item per point. **Simplify** (on by default) keeps the main fields: `id`, `type`, `displayName`, `locationType`, `location247`, `capabilities`, `address`, `coordinates`, `description` and, for Search Nearby, `distance`. Turn it off to get the full response, including opening hours and description translations. The **Language** option (for example `pl-PL`) sets the language of the point descriptions.
 
-Tracking, shipments and pickups are coming in the next versions.
+### Tracking
+
+Parcel tracking history from the InPost Tracking API. Needs the `api:tracking:read` scope.
+
+- **Get Events**: get the tracking history of one parcel, or of up to 10 parcels separated by commas. Spaces and repeated numbers are removed. The node returns one item per parcel, with `trackingNumber`, `events` (each with `eventCode`, `eventTimestamp` and `location`), `origin`, `destination`, `delivery`, `shipment`, `returnToSender` and `deliveryTimeWindow`. The **Event Version** option asks for a specific version of the events format; leave it empty for the latest.
+
+InPost keeps tracking data for 121 days. The meaning of each event code is listed in [InPost tracking events](https://developers.inpost-group.com/tracking-events). The `status` fields are filled only on the UK market. To track more than 10 parcels, pass them as separate input items: the node sends one request per item.
+
+Shipments and pickups are coming in the next versions.
 
 ## Credentials
 
@@ -65,6 +73,6 @@ Built and tested with n8n 2.x.
 
 ## Version history
 
-- 0.1.0 (in development): credentials for the InPost Global API; Point operations (Get, Get Many, Search Nearby).
+- 0.1.0 (in development): credentials for the InPost Global API; Point operations (Get, Get Many, Search Nearby); Tracking: Get Events.
 
 
