@@ -40,7 +40,7 @@ export const pointSearchNearbyDescription: INodeProperties[] = [
 		type: 'number',
 		required: true,
 		default: 0,
-		placeholder: '50.061',
+		placeholder: 'e.g. 50.061',
 		typeOptions: {
 			minValue: -90,
 			maxValue: 90,
@@ -67,7 +67,7 @@ export const pointSearchNearbyDescription: INodeProperties[] = [
 		type: 'number',
 		required: true,
 		default: 0,
-		placeholder: '19.938',
+		placeholder: 'e.g. 19.938',
 		typeOptions: {
 			minValue: -180,
 			maxValue: 180,
@@ -87,7 +87,7 @@ export const pointSearchNearbyDescription: INodeProperties[] = [
 		type: 'string',
 		required: true,
 		default: '',
-		placeholder: '30-001',
+		placeholder: 'e.g. 30-001',
 		description: 'Postal code to search around',
 		displayOptions: {
 			show: {

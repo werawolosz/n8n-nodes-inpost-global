@@ -20,7 +20,7 @@ export const trackingDescription: INodeProperties[] = [
 				name: 'Get Events',
 				value: 'getEvents',
 				action: 'Get tracking events',
-				description: 'Get the tracking history of up to 10 parcels',
+				description: 'Get the tracking history (events) of up to 10 parcels',
 				routing: {
 					request: {
 						method: 'GET',

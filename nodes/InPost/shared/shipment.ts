@@ -111,8 +111,9 @@ export async function requireOrganizationId(
 	const credentials = await this.getCredentials('inPostGlobalOAuth2Api');
 	if (!getOrganizationId(credentials)) {
 		throw new NodeOperationError(this.getNode(), 'The credentials have no Organization ID', {
+			itemIndex: this.getItemIndex(),
 			description:
-				'Open the InPost Global OAuth2 API credentials and fill in Organization ID. You get it from InPost when your account is set up, or in the Merchant Portal.',
+				"Open the InPost Global OAuth2 API credentials and fill in 'Organization ID'. You get it from InPost when your account is set up, or in the Merchant Portal.",
 		});
 	}
 	return requestOptions;
@@ -173,7 +174,8 @@ export function buildShipmentBody(
 
 	if (parcels.length === 0) {
 		throw new NodeOperationError(node, 'The shipment has no parcels', {
-			description: 'Add at least one parcel in the Parcels field.',
+			itemIndex: this.getItemIndex(),
+			description: "Add at least one parcel in 'Parcels'.",
 		});
 	}
 
@@ -182,6 +184,7 @@ export function buildShipmentBody(
 			node,
 			`A shipment sent from or to an InPost point can have only one parcel, but ${parcels.length} were added`,
 			{
+				itemIndex: this.getItemIndex(),
 				description: 'Keep one parcel, or create a separate shipment for each parcel.',
 			},
 		);
@@ -230,7 +233,8 @@ export function buildShipmentBody(
 			node,
 			'A courier shipment with Cash on Delivery needs Additional Cover of at least the same amount',
 			{
-				description: `Add Additional Cover of at least ${additional.cashOnDelivery} ${currency} in Additional Fields.`,
+				itemIndex: this.getItemIndex(),
+				description: `Add Additional Cover of at least ${additional.cashOnDelivery} ${currency} in 'Additional Fields'.`,
 			},
 		);
 	}
@@ -243,15 +247,17 @@ export function buildShipmentBody(
 	}
 	if (Object.keys(customReferences).length > 3) {
 		throw new NodeOperationError(node, 'InPost accepts at most 3 custom references', {
+			itemIndex: this.getItemIndex(),
 			description: 'Remove custom references until at most 3 are left.',
 		});
 	}
 
 	const deduplicationId = additional.deduplicationId?.trim();
 	if (deduplicationId && !UUID_PATTERN.test(deduplicationId)) {
-		throw new NodeOperationError(node, 'The Deduplication ID is not a UUID', {
+		throw new NodeOperationError(node, "'Deduplication ID' is not a UUID", {
+			itemIndex: this.getItemIndex(),
 			description:
-				'Use a UUID such as 3fa85f64-5717-4562-b3fc-2c963f66afa6, ideally one stored with your order so that a retry sends the same value. Leave the field empty if you do not need it.',
+				"Use a UUID such as 3fa85f64-5717-4562-b3fc-2c963f66afa6, ideally one stored with your order so that a retry sends the same value. Leave 'Deduplication ID' empty if you do not need it.",
 		});
 	}
 
@@ -310,6 +316,7 @@ export async function labelToBinary(
 					this.getNode(),
 					`InPost returned no label for shipment ${trackingNumber}`,
 					{
+						itemIndex: this.getItemIndex(),
 						description:
 							'Check the tracking number. If the shipment was created a moment ago, wait a few seconds and try again.',
 					},

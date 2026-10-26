@@ -154,7 +154,8 @@ export function buildPickupBody(this: IExecuteSingleFunctions, now = Date.now())
 
 	const phone = parsePolishPhone(String(contact.phone ?? ''));
 	if (!phone) {
-		throw new NodeOperationError(node, 'The contact phone is not a Polish phone number', {
+		throw new NodeOperationError(node, "The 'Phone' of the contact person is not a Polish phone number", {
+			itemIndex: this.getItemIndex(),
 			description:
 				'InPost pickups accept only Polish numbers (+48). Enter 9 digits, for example 512345678 or +48 512 345 678.',
 		});
@@ -163,13 +164,15 @@ export function buildPickupBody(this: IExecuteSingleFunctions, now = Date.now())
 	const from = toPickupMoment(this.getNodeParameter('pickupFrom'), timeZone);
 	const to = toPickupMoment(this.getNodeParameter('pickupTo'), timeZone);
 	if (!from || !to) {
-		throw new NodeOperationError(node, 'Pickup From and Pickup To need a date and a time', {
+		throw new NodeOperationError(node, "'Pickup From' and 'Pickup To' need a date and a time", {
+			itemIndex: this.getItemIndex(),
 			description: 'Pick both values in the date picker, or use a date-time such as 2026-10-27T09:00.',
 		});
 	}
 	if (from.date !== to.date) {
 		throw new NodeOperationError(node, 'The pickup window must start and end on the same day', {
-			description: `Pickup From is on ${from.date} and Pickup To is on ${to.date}. Choose times on one day, usually between 09:00 and 18:00.`,
+			itemIndex: this.getItemIndex(),
+			description: `'Pickup From' is on ${from.date} and 'Pickup To' is on ${to.date}. Choose times on one day, usually between 09:00 and 18:00.`,
 		});
 	}
 	if (to.timestamp - from.timestamp < MIN_WINDOW_MINUTES * MINUTE) {
@@ -177,13 +180,15 @@ export function buildPickupBody(this: IExecuteSingleFunctions, now = Date.now())
 			node,
 			`The pickup window must be at least ${MIN_WINDOW_MINUTES} minutes long`,
 			{
-				description: 'Move Pickup To later, or Pickup From earlier, so that there are at least 2 hours between them.',
+				itemIndex: this.getItemIndex(),
+				description: "Move 'Pickup To' later, or 'Pickup From' earlier, so that there are at least 2 hours between them.",
 			},
 		);
 	}
 	if (to.timestamp <= now) {
 		throw new NodeOperationError(node, 'The pickup window is already over', {
-			description: 'Choose a Pickup To time in the future.',
+			itemIndex: this.getItemIndex(),
+			description: "Choose a 'Pickup To' time in the future.",
 		});
 	}
 	const latestDate = toPickupMoment(new Date(now + MAX_DAYS_AHEAD * DAY).toISOString(), timeZone)?.date;
@@ -192,6 +197,7 @@ export function buildPickupBody(this: IExecuteSingleFunctions, now = Date.now())
 			node,
 			`A pickup can be booked at most ${MAX_DAYS_AHEAD} days ahead`,
 			{
+				itemIndex: this.getItemIndex(),
 				description: `Choose a day up to ${latestDate}.`,
 			},
 		);
@@ -225,6 +231,7 @@ export function buildPickupBody(this: IExecuteSingleFunctions, now = Date.now())
 			.filter((value) => value !== '');
 		if (trackingNumbers.length === 0) {
 			throw new NodeOperationError(node, 'Recyclable packaging pickups need tracking numbers', {
+				itemIndex: this.getItemIndex(),
 				description: 'Enter the tracking numbers of the packaging, separated by commas.',
 			});
 		}
@@ -256,6 +263,7 @@ export function buildPickupBody(this: IExecuteSingleFunctions, now = Date.now())
 	}
 	if (Object.keys(customReferences).length > 3) {
 		throw new NodeOperationError(node, 'InPost accepts at most 3 custom references', {
+			itemIndex: this.getItemIndex(),
 			description: 'Remove custom references until at most 3 are left.',
 		});
 	}

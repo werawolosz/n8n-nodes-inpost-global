@@ -84,7 +84,7 @@ export const pointGetManyDescription: INodeProperties[] = [
 				name: 'administrativeArea',
 				type: 'string',
 				default: '',
-				placeholder: 'małopolskie',
+				placeholder: 'e.g. małopolskie',
 				description:
 					'Province or voivodeship of the point. Separate several values with commas.',
 				routing: {
@@ -100,7 +100,7 @@ export const pointGetManyDescription: INodeProperties[] = [
 				name: 'city',
 				type: 'string',
 				default: '',
-				placeholder: 'Kraków,Warszawa',
+				placeholder: 'e.g. Kraków,Warszawa',
 				description: 'City of the point. Separate several values with commas.',
 				routing: {
 					send: {
@@ -115,7 +115,7 @@ export const pointGetManyDescription: INodeProperties[] = [
 				name: 'postalCode',
 				type: 'string',
 				default: '',
-				placeholder: '30-394',
+				placeholder: 'e.g. 30-394',
 				description: 'Postal code of the point. Separate several values with commas.',
 				routing: {
 					send: {

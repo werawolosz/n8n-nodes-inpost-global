@@ -263,3 +263,25 @@ Checked in `one-time-pickups-v3.json` on 2026-10-26:
 - `shipping-v32.json` declares only a `Bearer` security scheme, but its
   operations reference an undefined `oauth2` scheme. We assume the same OAuth2
   token as the other APIs (checked 2026-10-21; confirm on stage in M4).
+
+## 7. Verification status (M6, 2026-10-26)
+
+Done: lint clean; no runtime dependencies, no `process.env`, no file system
+access; MIT; English-only UI; README with operations, credentials, an example
+workflow (`examples/ship-to-nearest-locker.json`) and tips; codex category
+`Sales` with aliases; credential documentation link to the README; actions
+without articles, Get Many descriptions "Retrieve a list of …", placeholders
+starting with "e.g.", field names in single quotes in messages, `itemIndex` on
+every node message; Simplify on Point and Pickup reads; publish workflow with
+npm provenance.
+
+Still open before submitting to n8n:
+
+- Stage tests of M1–M5 (no stage credentials yet).
+- Icon: neutral parcel icon until InPost answers the logo question (§6).
+- Resource Locator ("From list") is not used: Point ID, Tracking Number and
+  Order ID are plain text fields. Pickup Order ID could get a list search
+  later if reviewers ask.
+- Public GitHub repo `werawolosz/n8n-nodes-inpost-global`, npm Trusted
+  Publishing, first release, then `npx @n8n/scan-community-package
+  n8n-nodes-inpost-global`.

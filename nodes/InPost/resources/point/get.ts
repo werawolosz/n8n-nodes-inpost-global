@@ -13,7 +13,7 @@ export const pointGetDescription: INodeProperties[] = [
 		type: 'string',
 		required: true,
 		default: '',
-		placeholder: 'PL_KRA02APP',
+		placeholder: 'e.g. PL_KRA02APP',
 		description: 'ID of the point: the country code, an underscore and the point name',
 		displayOptions: {
 			show: showOnlyForPointGet,

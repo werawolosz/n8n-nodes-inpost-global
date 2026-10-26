@@ -10,6 +10,7 @@ InPost is a parcel delivery company known for its parcel lockers (Paczkomaty). I
 [Operations](#operations)  
 [Credentials](#credentials)  
 [Compatibility](#compatibility)  
+[Usage](#usage)  
 [Resources](#resources)  
 [Version history](#version-history)  
 
@@ -100,11 +101,34 @@ In n8n, create an **InPost Global OAuth2 API** credential and fill in:
 | Organization ID | Your merchant organization ID. Shipments and pickups need it |
 | Scope | All six scopes are filled in by default. Remove the ones your client does not have |
 
+Start with the stage environment and switch to production when your workflow works.
+
 When you save the credential, n8n requests a token and checks it with a call to the Points API, so your client needs the `api:points:read` scope for the test to pass.
 
 ## Compatibility
 
-Built and tested with n8n 2.x.
+Built with `@n8n/node-cli` and loaded in n8n 2.44. The package has no runtime dependencies.
+
+## Usage
+
+### Example: ship to the nearest parcel locker
+
+The [example workflow](examples/ship-to-nearest-locker.json) finds the nearest parcel locker for a postal code, creates a shipment to it and downloads the PDF label. To use it:
+
+1. In n8n, create a new workflow, open the **⋯** menu and choose **Import from File**. You can also copy the JSON and paste it into the empty canvas.
+2. Open each InPost node and select your **InPost Global OAuth2 API** credential.
+3. Replace the sender and recipient details, and the parcel size and weight, with real values.
+4. Run the workflow. The last node outputs the label in the binary field `data`. Connect an email or file storage node to send or save it.
+
+Start with the **Stage (Sandbox)** environment: shipments created there are not real.
+
+### Tips
+
+- **Point IDs**: the Point operations return IDs such as `PL_KRA09N`. You can pass them straight to **Shipment → Create**; the node removes the country prefix.
+- **Many tracking numbers**: Tracking → Get Events accepts up to 10 numbers per item. For longer lists, pass one number per item, for example from a spreadsheet.
+- **Retries**: for Shipment → Create, set **Deduplication ID** to a UUID stored with your order. If n8n retries the request, InPost does not create a second shipment.
+- **Pickup time zone**: Pickup From and Pickup To are read in the time zone of the workflow (**Workflow settings → Timezone**).
+- **When something is rejected**: the node checks common rules before it calls InPost and tells you which field to change. If InPost itself rejects the request, open the error details in n8n to see InPost's message for each field.
 
 ## Resources
 
@@ -113,6 +137,6 @@ Built and tested with n8n 2.x.
 
 ## Version history
 
-- 0.1.0 (in development): credentials for the InPost Global API; Point operations (Get, Get Many, Search Nearby); Tracking: Get Events; Shipment: Create, Get, Get Label; Pickup: Create, Get, Get Many, Cancel, Get Cut-Off Time.
+- 0.1.0 (unreleased): credentials for the InPost Global API; Point operations (Get, Get Many, Search Nearby); Tracking: Get Events; Shipment: Create, Get, Get Label; Pickup: Create, Get, Get Many, Cancel, Get Cut-Off Time.
 
 

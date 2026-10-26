@@ -24,8 +24,8 @@ export const shipmentDescription: INodeProperties[] = [
 			{
 				name: 'Create',
 				value: 'create',
-				action: 'Create a shipment',
-				description: 'Create a shipment to an InPost point or an address',
+				action: 'Create shipment',
+				description: 'Create a new shipment to an InPost point or an address',
 				routing: {
 					request: {
 						method: 'POST',
@@ -39,7 +39,7 @@ export const shipmentDescription: INodeProperties[] = [
 			{
 				name: 'Get',
 				value: 'get',
-				action: 'Get a shipment',
+				action: 'Get shipment',
 				description: 'Get the parcel numbers and routing of a shipment',
 				routing: {
 					request: {
@@ -54,8 +54,8 @@ export const shipmentDescription: INodeProperties[] = [
 			{
 				name: 'Get Label',
 				value: 'getLabel',
-				action: 'Get a shipment label',
-				description: 'Download the shipping label as a PDF, ZPL or EPL2 file',
+				action: 'Get shipment label',
+				description: 'Download the label of a shipment as a PDF, ZPL or EPL2 file',
 				routing: {
 					request: {
 						method: 'GET',

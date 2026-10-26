@@ -6,9 +6,15 @@
 	"homepage": "https://github.com/werawolosz/n8n-nodes-inpost-global",
 	"keywords": [
 		"n8n-community-node-package",
+		"n8n",
 		"inpost",
+		"inpost-global",
 		"paczkomaty",
-		"shipping"
+		"parcel-locker",
+		"shipping",
+		"tracking",
+		"courier",
+		"shipping-label"
 	],
 	"author": {
 		"name": "Weronika Wołosz",

@@ -6,7 +6,7 @@ export const shipmentTrackingNumberField: INodeProperties = {
 	type: 'string',
 	required: true,
 	default: '',
-	placeholder: '600000658493991742009752',
+	placeholder: 'e.g. 600000658493991742009752',
 	description: 'Tracking number of the shipment, returned by the Create operation',
 	displayOptions: {
 		show: {

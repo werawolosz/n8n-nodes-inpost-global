@@ -2,7 +2,9 @@
 	"node": "n8n-nodes-inpost-global.inPost",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
-	"categories": ["Miscellaneous"],
+	"categories": [
+		"Sales"
+	],
 	"resources": {
 		"credentialDocumentation": [
 			{
@@ -14,5 +16,16 @@
 				"url": "https://github.com/werawolosz/n8n-nodes-inpost-global?tab=readme-ov-file"
 			}
 		]
-	}
+	},
+	"alias": [
+		"Paczkomat",
+		"Parcel Locker",
+		"ParcelPoint",
+		"Shipping",
+		"Shipment",
+		"Courier",
+		"Tracking",
+		"Label",
+		"Pickup"
+	]
 }

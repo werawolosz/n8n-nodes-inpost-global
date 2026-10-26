@@ -62,7 +62,7 @@ export const pointCountryFilter: INodeProperties = {
 	name: 'country',
 	type: 'string',
 	default: '',
-	placeholder: 'PL',
+	placeholder: 'e.g. PL',
 	description: 'Two-letter country code (ISO 3166-1 alpha-2)',
 	routing: {
 		send: {
@@ -77,7 +77,7 @@ export const languageOption: INodeProperties = {
 	name: 'language',
 	type: 'string',
 	default: '',
-	placeholder: 'en-GB',
+	placeholder: 'e.g. en-GB',
 	description: 'Language of the point descriptions, for example en-GB or pl-PL',
 	routing: {
 		request: {

@@ -65,7 +65,8 @@ export async function setTrackingNumbers(
 
 	if (trackingNumbers.length === 0) {
 		throw new NodeOperationError(this.getNode(), 'No tracking number was entered', {
-			description: 'Enter at least one tracking number in the Tracking Numbers field.',
+			itemIndex: this.getItemIndex(),
+			description: "Enter at least one tracking number in 'Tracking Numbers'.",
 		});
 	}
 
@@ -74,6 +75,7 @@ export async function setTrackingNumbers(
 			this.getNode(),
 			`You entered ${trackingNumbers.length} tracking numbers, but InPost accepts at most ${MAX_TRACKING_NUMBERS_PER_REQUEST} per request`,
 			{
+				itemIndex: this.getItemIndex(),
 				description: `Split the tracking numbers across several input items, with at most ${MAX_TRACKING_NUMBERS_PER_REQUEST} in each.`,
 			},
 		);
@@ -116,8 +118,9 @@ export async function splitParcels(
 			this.getNode(),
 			`InPost has no tracking data for ${label} ${missing.join(', ')}`,
 			{
+				itemIndex: this.getItemIndex(),
 				description:
-					'Check that the number is typed correctly and belongs to your organization. InPost keeps tracking data for 121 days, and a new parcel appears only after its first event. To skip such numbers and keep going, turn on the node setting On Error: Continue.',
+					"Check that the number is typed correctly and belongs to your organization. InPost keeps tracking data for 121 days, and a new parcel appears only after its first event. To skip such numbers and keep going, set 'On Error' to 'Continue' in the node settings.",
 			},
 		);
 	}

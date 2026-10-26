@@ -31,7 +31,7 @@ export const pickupDescription: INodeProperties[] = [
 			{
 				name: 'Cancel',
 				value: 'cancel',
-				action: 'Cancel a pickup',
+				action: 'Cancel pickup',
 				description: 'Cancel a courier pickup',
 				routing: {
 					request: {
@@ -49,8 +49,8 @@ export const pickupDescription: INodeProperties[] = [
 			{
 				name: 'Create',
 				value: 'create',
-				action: 'Create a pickup',
-				description: 'Book a courier to collect parcels from an address in Poland',
+				action: 'Create pickup',
+				description: 'Create a new pickup: book a courier to collect items from an address in Poland',
 				routing: {
 					request: {
 						method: 'POST',
@@ -64,7 +64,7 @@ export const pickupDescription: INodeProperties[] = [
 			{
 				name: 'Get',
 				value: 'get',
-				action: 'Get a pickup',
+				action: 'Get pickup',
 				description: 'Get the details and status of a courier pickup',
 				routing: {
 					request: {
@@ -82,8 +82,8 @@ export const pickupDescription: INodeProperties[] = [
 			{
 				name: 'Get Cut-Off Time',
 				value: 'getCutoffTime',
-				action: 'Get the pickup cut off time',
-				description: 'Get the latest time to book a pickup for a postal code',
+				action: 'Get pickup cutoff time',
+				description: 'Get the latest time to book a pickup for a Polish postal code',
 				routing: {
 					request: {
 						method: 'GET',
@@ -101,7 +101,7 @@ export const pickupDescription: INodeProperties[] = [
 				name: 'Get Many',
 				value: 'getAll',
 				action: 'Get many pickups',
-				description: 'Get many courier pickups',
+				description: 'Retrieve a list of pickups',
 				routing: {
 					request: {
 						method: 'GET',
@@ -133,7 +133,7 @@ export const pickupDescription: INodeProperties[] = [
 		type: 'string',
 		required: true,
 		default: '',
-		placeholder: 'fd87b112-fd3f-4797-abe9-824ffc306d4d',
+		placeholder: 'e.g. fd87b112-fd3f-4797-abe9-824ffc306d4d',
 		description: 'ID of the pickup, returned by the Create operation',
 		displayOptions: {
 			show: {

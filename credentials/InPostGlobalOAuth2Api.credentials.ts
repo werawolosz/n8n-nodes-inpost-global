@@ -14,7 +14,7 @@ export class InPostGlobalOAuth2Api implements ICredentialType {
 
 	icon: Icon = { light: 'file:../icons/inpost.svg', dark: 'file:../icons/inpost.dark.svg' };
 
-	documentationUrl = 'https://developers.inpost-group.com/';
+	documentationUrl = 'https://github.com/werawolosz/n8n-nodes-inpost-global?tab=readme-ov-file#credentials';
 
 	properties: INodeProperties[] = [
 		{

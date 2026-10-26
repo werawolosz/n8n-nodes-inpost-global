@@ -1,0 +1,95 @@
+{
+	"name": "InPost: ship to the nearest parcel locker and download the label",
+	"nodes": [
+		{
+			"parameters": {},
+			"name": "When clicking 'Execute workflow'",
+			"type": "n8n-nodes-base.manualTrigger",
+			"typeVersion": 1,
+			"position": [0, 0]
+		},
+		{
+			"parameters": {
+				"resource": "point",
+				"operation": "searchNearby",
+				"searchBy": "postalCode",
+				"postalCode": "30-001",
+				"maxDistance": 5000,
+				"limit": 1,
+				"filters": {
+					"capabilities": ["PARCEL_COLLECT"],
+					"type": ["APM"]
+				}
+			},
+			"name": "Find Nearest Parcel Locker",
+			"type": "n8n-nodes-inpost-global.inPost",
+			"typeVersion": 1,
+			"position": [220, 0]
+		},
+		{
+			"parameters": {
+				"resource": "shipment",
+				"operation": "create",
+				"sendFrom": "point",
+				"originCountryCode": "PL",
+				"shippingMethod": "APM",
+				"deliverTo": "point",
+				"destinationCountryCode": "PL",
+				"pointId": "={{ $json.id }}",
+				"sender": {
+					"firstName": "Kris",
+					"lastName": "Kelvin",
+					"email": "sender@example.com",
+					"phone": "+48500000001"
+				},
+				"recipient": {
+					"firstName": "Anna",
+					"lastName": "Nowak",
+					"email": "recipient@example.com",
+					"phone": "+48500000002"
+				},
+				"parcels": {
+					"parcel": [
+						{
+							"dimensionUnit": "CM",
+							"height": 8,
+							"length": 38,
+							"weight": 1,
+							"weightUnit": "KG",
+							"width": 64
+						}
+					]
+				},
+				"additionalFields": {}
+			},
+			"name": "Create Shipment",
+			"type": "n8n-nodes-inpost-global.inPost",
+			"typeVersion": 1,
+			"position": [440, 0]
+		},
+		{
+			"parameters": {
+				"resource": "shipment",
+				"operation": "getLabel",
+				"trackingNumber": "={{ $json.trackingNumber }}",
+				"format": "application/pdf+json;format=A6"
+			},
+			"name": "Download Label",
+			"type": "n8n-nodes-inpost-global.inPost",
+			"typeVersion": 1,
+			"position": [660, 0]
+		}
+	],
+	"connections": {
+		"When clicking 'Execute workflow'": {
+			"main": [[{ "node": "Find Nearest Parcel Locker", "type": "main", "index": 0 }]]
+		},
+		"Find Nearest Parcel Locker": {
+			"main": [[{ "node": "Create Shipment", "type": "main", "index": 0 }]]
+		},
+		"Create Shipment": {
+			"main": [[{ "node": "Download Label", "type": "main", "index": 0 }]]
+		}
+	},
+	"settings": {}
+}

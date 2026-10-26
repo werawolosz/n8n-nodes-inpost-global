@@ -7,7 +7,7 @@ export const pickupGetCutoffTimeDescription: INodeProperties[] = [
 		type: 'string',
 		required: true,
 		default: '',
-		placeholder: '30-727',
+		placeholder: 'e.g. 30-727',
 		description:
 			'Polish postal code (00-000). The pickup must be booked, and its window must start, before the returned time.',
 		displayOptions: {

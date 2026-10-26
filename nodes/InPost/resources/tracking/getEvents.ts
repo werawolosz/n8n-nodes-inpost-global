@@ -12,7 +12,7 @@ export const trackingGetEventsDescription: INodeProperties[] = [
 		type: 'string',
 		required: true,
 		default: '',
-		placeholder: 'MD01234567890123, 10055003420100',
+		placeholder: 'e.g. MD01234567890123, 10055003420100',
 		description: 'One tracking number, or up to 10 separated by commas',
 		displayOptions: {
 			show: showOnlyForTrackingGetEvents,

@@ -21,8 +21,8 @@ export const pointDescription: INodeProperties[] = [
 			{
 				name: 'Get',
 				value: 'get',
-				action: 'Get a point',
-				description: 'Get the details of a parcel locker or ParcelPoint',
+				action: 'Get point',
+				description: 'Get a point (parcel locker or ParcelPoint) by its ID',
 				routing: {
 					request: {
 						method: 'GET',
@@ -37,7 +37,7 @@ export const pointDescription: INodeProperties[] = [
 				name: 'Get Many',
 				value: 'getAll',
 				action: 'Get many points',
-				description: 'Get many parcel lockers and ParcelPoints, with optional filters',
+				description: 'Retrieve a list of points (parcel lockers and ParcelPoints), with optional filters',
 				routing: {
 					request: {
 						method: 'GET',
