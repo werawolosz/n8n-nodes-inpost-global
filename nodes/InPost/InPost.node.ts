@@ -1,4 +1,5 @@
 import { NodeConnectionTypes, type INodeType, type INodeTypeDescription } from 'n8n-workflow';
+import { pickupDescription } from './resources/pickup';
 import { pointDescription } from './resources/point';
 import { shipmentDescription } from './resources/shipment';
 import { trackingDescription } from './resources/tracking';
@@ -40,6 +41,10 @@ export class InPost implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
+						name: 'Pickup',
+						value: 'pickup',
+					},
+					{
 						name: 'Point',
 						value: 'point',
 					},
@@ -54,6 +59,7 @@ export class InPost implements INodeType {
 				],
 				default: 'point',
 			},
+			...pickupDescription,
 			...pointDescription,
 			...shipmentDescription,
 			...trackingDescription,

@@ -62,7 +62,27 @@ Most additional services work only for courier shipments from address to address
 
 Customs clearance, return address and RVM parcels are not supported yet.
 
-Pickups are coming in the next version.
+### Pickup
+
+Courier pickups from the InPost One-time Pickups API. Create and Cancel need the `api:one-time-pickups:write` scope; Get, Get Many and Get Cut-Off Time need `api:one-time-pickups:read`. All operations except Get Cut-Off Time use the **Organization ID** from the credentials.
+
+Pickups are available in Poland only and need an active logistics contract with InPost.
+
+- **Create**: book a courier to collect items from an address.
+  - **Pickup Address**: street, house number, city and postal code (required), flat number and a location description with tips for the courier.
+  - **Contact Person**: first name, last name, email and a Polish phone number (9 digits, with or without `+48`).
+  - **Pickup From** / **Pickup To**: the pickup window, read in the time zone of the workflow. It must be on one day (usually between 09:00 and 18:00), at least 2 hours long, not over yet, and at most 7 days ahead. The node checks these rules before it sends the request.
+  - **Item Type**: Parcels or Pallets (with count and total weight), or Recyclable Packaging (with count, total volume in liters and the tracking numbers of the packaging).
+  - **Custom References**: up to 3 key-value pairs.
+  - Returns the pickup ID, the carrier reference and the creation time.
+- **Get**: get a pickup by its order ID.
+- **Get Many**: list pickups, with **Return All** or a **Limit**, sorted by created or last modified time.
+- **Cancel**: cancel a pickup by its order ID. InPost starts the cancellation and the node returns `{ id, cancelRequested: true }`. Use Get to see the final status.
+- **Get Cut-Off Time**: get the latest time to book a pickup for a Polish postal code, for example `{ "postalCode": "30-727", "cutoffTime": "13:00" }`. The pickup must be booked, and its window must start, before this time.
+
+**Simplify** (Get and Get Many, on by default) returns `id`, `status`, `isOpen`, `pickupFrom`, `pickupTo`, a one-line `address`, `itemType`, `count`, `carrierTrackingNumber` and `createdTime`. `isOpen` is `true` while the pickup is still planned (CREATED, PENDING, RESCHEDULED) and `false` once it is collected, cancelled or closed for another reason.
+
+You cannot book a second pickup for the same address and time unless the location description is different.
 
 ## Credentials
 
@@ -93,6 +113,6 @@ Built and tested with n8n 2.x.
 
 ## Version history
 
-- 0.1.0 (in development): credentials for the InPost Global API; Point operations (Get, Get Many, Search Nearby); Tracking: Get Events; Shipment: Create, Get, Get Label.
+- 0.1.0 (in development): credentials for the InPost Global API; Point operations (Get, Get Many, Search Nearby); Tracking: Get Events; Shipment: Create, Get, Get Label; Pickup: Create, Get, Get Many, Cancel, Get Cut-Off Time.
 
 

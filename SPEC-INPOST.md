@@ -204,6 +204,37 @@ Statuses — still open: `CREATED`, `PENDING`, `RESCHEDULED`. Final:
 `COLLECTED`, `CANCELLED`, `DUPLICATED`, `NONCOMPLIANT`, `INVALIDATED`,
 `INFEASIBLE`, `UNLABELLED`, `EMPTY`.
 
+Checked in `one-time-pickups-v3.json` on 2026-10-26:
+
+- Required address fields: `countryCode`, `street`, `houseNumber`,
+  `city`, `postalCode`. Required contact fields: all four.
+- `phone.prefix` must be `+48` (Polish numbers only). The node has one
+  Phone field and splits it (accepts `512345678`, `+48 512 345 678`,
+  `0048…`).
+- `pickupTime` needs a date-time with an offset. The node reads the date
+  pickers in the workflow time zone and sends e.g. `2026-10-28T09:00:00+01:00`.
+  It stops early when the window spans two days, is shorter than 120 minutes,
+  is already over, or starts more than 7 days ahead.
+- Get Many: `page` is zero-based, page size is `size`; the response is
+  `{ page, count, perPage, totalPages, items[] }`. The node pages while
+  `page + 1 < totalPages`. To check on stage: whether the response `page`
+  is zero-based too, and which `sort` properties are accepted (the node
+  offers `createdTime` and `lastModifiedTime`).
+- A pickup order has 12–13 fields, so Get and Get Many have a Simplify toggle
+  (`id`, `status`, `isOpen`, `pickupFrom`, `pickupTo`, one-line
+  `address`, `itemType`, `count`, `carrierTrackingNumber`,
+  `createdTime`). `isOpen` is true for the still-open statuses above.
+- Cancel returns 200 with no body ("cancellation initiated"); the node outputs
+  `{ id, cancelRequested: true }`.
+- Cut-off: the schema says `{ hour, minute, second, nano }`, the example
+  says `"13:00:00"`. The node accepts both and outputs `"HH:MM"`.
+  Only Polish postal codes (`00-000`); the node always sends
+  `countryCode=PL`.
+- `references.custom` has `maxLength: 3` on both the object and the values,
+  which looks like a spec slip for "at most 3 pairs". The node allows at most
+  3 pairs and does not limit value length. To check on stage.
+- The spec's organization and order IDs are UUIDs.
+
 ## 4. Milestones
 
 | Milestone | Scope | Done when |
