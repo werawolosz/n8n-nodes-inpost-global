@@ -135,15 +135,41 @@ Create — UI proposal (build the nested body in a `preSend` function):
   Saturday Delivery, Evening Delivery, Priority, Delivery Window, Enable
   Drop-Off Code, Reference, Deduplication ID.
 
+Rules from the spec (checked 2026-10-26), enforced or hinted in the node:
+
+- The JSON body has no discriminator keys: origin, destination and value-added
+  services are told apart by their fields (see the spec's request example).
+- Destination `pointId` has no country prefix (`KRA09N`), while the
+  Location API returns `PL_KRA09N`; the node strips `{countryCode}_`.
+  Confirm on stage.
+- Shipments from or to a point have exactly one parcel (node stops early).
+- Courier COD needs `additionalCover` ≥ the COD amount (node stops early).
+  Currency: PLN for PL-domestic, EUR cross-border.
+- Phones in E.164 (`+48…`); without `+` the origin/destination country is
+  assumed.
+- `X-Deduplication-Id` must be a UUID (node checks the format).
+- At most 3 `references.custom` pairs (node checks).
+- `returnDestination` works for PL-domestic only and is left out of v0.1, as
+  are `customsClearance`, RVM parcels and `remarks` (label print fields).
+- Most value-added services are PL-domestic, courier address-to-address only;
+  unavailable ones come back as `valueAddedServices.<id>: ["unavailable"]`.
+- 400 responses carry an `errors` object (field → messages). n8n shows the
+  title and the full response in the error details. To check on stage whether
+  that is readable enough.
+
 Get Label:
 
-- Format → `Accept` header: PDF A6 (`application/pdf;format=A6`, default),
-  PDF A4 (`application/pdf;format=A4`), ZPL 203 dpi (`text/zpl;dpi=203`), ZPL
-  300 dpi (`text/zpl;dpi=300`), EPL2 203 dpi (`text/epl2;dpi=203`, Polish
-  domestic services only). DPL and PNG are pilots — leave them out.
-- Return the label as binary data in a field named by the option "Put Output
-  File in Field" (default `data`), file name `label-<trackingNumber>.<ext>`.
-  Use `encoding: 'arraybuffer'` with a `binaryData` post-receive action.
+- Format → `Accept` header. The spec documents only a JSON response
+  `{ label: { content: <base64> } }` and offers a `+json` variant of every
+  format, so the node asks for: PDF A6 (`application/pdf+json;format=A6`,
+  default), PDF A4 (`application/pdf+json;format=A4`), ZPL 203 dpi
+  (`text/zpl+json;dpi=203`), ZPL 300 dpi (`text/zpl+json;dpi=300`), EPL2
+  203 dpi (`text/epl2+json;dpi=203`, Polish domestic services only). DPL is
+  left out (pilot); PNG is not in the spec.
+- A post-receive function decodes the base64 into binary data in the field
+  named by "Put Output File in Field" (default `data`), file name
+  `label-<trackingNumber>.<pdf|zpl|epl>`. (Checked 2026-10-26; the old plan
+  with `encoding: 'arraybuffer'` does not match the spec.)
 
 ### 3.4 Pickup — One-time pickups API (`api:one-time-pickups:read` / `:write`)
 

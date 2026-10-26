@@ -44,7 +44,25 @@ InPost keeps tracking data for 121 days. The meaning of each event code is liste
 
 If InPost returns no data for one of the numbers (a typo, a parcel of another organization, older than 121 days, or a new parcel without events yet), the node stops and names the missing numbers. To skip such numbers and keep going, set the node setting **On Error** to **Continue**.
 
-Shipments and pickups are coming in the next versions.
+### Shipment
+
+Shipments from the InPost Shipping API v2. Create and Get Label need the `api:shipments:write` scope, Get needs `api:shipments:read`. All three use the **Organization ID** from the credentials.
+
+- **Create**: create a shipment.
+  - **Send From**: an **InPost Point** (you drop the parcel off at a parcel locker, ParcelPoint, hub or any point) or an **Address** (a courier collects it).
+  - **Deliver To**: an **InPost Point** (Point ID such as `KRA09N`; an ID from the Point operations such as `PL_KRA09N` works too) or an **Address**.
+  - **Sender** and **Recipient**: first name, last name, email and phone (international format, for example `+48512345678`) are required; company name is optional.
+  - **Parcels**: dimensions with unit, weight with unit, non-standard shape and your own reference. A shipment sent from or to a point can have only one parcel.
+  - **Additional Fields**: Product Variant, Cash on Delivery, Additional Cover, Currency, Priority, Delivery Window, SMS Notification, Email Notification, Saturday Delivery, Evening Delivery, Return of Documents, Enable Drop-Off Code, Custom References (up to 3) and Deduplication ID (a UUID that stops a retried request from creating the shipment twice).
+  - Returns the tracking number, the parcel numbers and the routing.
+- **Get**: get the parcel numbers and routing of a shipment by its tracking number.
+- **Get Label**: download the label as a file: PDF A6 (default), PDF A4, ZPL 203 dpi, ZPL 300 dpi or EPL2 203 dpi (EPL2 for domestic shipments within Poland only). The file goes to the binary field set in **Put Output File in Field** (default `data`) and is named `label-<tracking number>.pdf` (or `.zpl` / `.epl`).
+
+Most additional services work only for courier shipments from address to address within Poland, and their availability depends on your InPost contract. A courier shipment with Cash on Delivery needs Additional Cover of at least the same amount. When InPost rejects a shipment, the error details in n8n show which fields to fix.
+
+Customs clearance, return address and RVM parcels are not supported yet.
+
+Pickups are coming in the next version.
 
 ## Credentials
 
@@ -75,6 +93,6 @@ Built and tested with n8n 2.x.
 
 ## Version history
 
-- 0.1.0 (in development): credentials for the InPost Global API; Point operations (Get, Get Many, Search Nearby); Tracking: Get Events.
+- 0.1.0 (in development): credentials for the InPost Global API; Point operations (Get, Get Many, Search Nearby); Tracking: Get Events; Shipment: Create, Get, Get Label.
 
 
