@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-inpost-global.inPost",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Miscellaneous"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://github.com/GITHUB_USER/n8n-nodes-inpost-global?tab=readme-ov-file#credentials"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/GITHUB_USER/n8n-nodes-inpost-global?tab=readme-ov-file"
+			}
+		]
+	}
+}

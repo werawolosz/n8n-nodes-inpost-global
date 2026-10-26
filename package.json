@@ -1,0 +1,53 @@
+{
+	"name": "n8n-nodes-inpost-global",
+	"version": "0.1.0",
+	"description": "n8n community node for the InPost Global API: parcel lockers and points, tracking, shipments, labels and courier pickups",
+	"license": "MIT",
+	"homepage": "https://github.com/GITHUB_USER/n8n-nodes-inpost-global",
+	"keywords": [
+		"n8n-community-node-package",
+		"inpost",
+		"paczkomaty",
+		"shipping"
+	],
+	"author": {
+		"name": "Weronika Wołosz",
+		"email": "weronikawoloszautomatyzacja@gmail.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/GITHUB_USER/n8n-nodes-inpost-global.git"
+	},
+	"scripts": {
+		"build": "n8n-node build",
+		"build:watch": "tsc --watch",
+		"dev": "n8n-node dev",
+		"lint": "n8n-node lint",
+		"lint:fix": "n8n-node lint --fix",
+		"release": "n8n-node release",
+		"prepublishOnly": "n8n-node prerelease"
+	},
+	"files": [
+		"dist"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"strict": true,
+		"credentials": [
+			"dist/credentials/InPostGlobalOAuth2Api.credentials.js"
+		],
+		"nodes": [
+			"dist/nodes/InPost/InPost.node.js"
+		]
+	},
+	"devDependencies": {
+		"@n8n/node-cli": "*",
+		"eslint": "9.32.0",
+		"prettier": "3.6.2",
+		"release-it": "^21.1.0",
+		"typescript": "5.9.2"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	}
+}
