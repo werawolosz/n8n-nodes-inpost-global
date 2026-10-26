@@ -38,9 +38,17 @@ Implementation notes:
 
 | Operation | Endpoint | Inputs |
 | --- | --- | --- |
-| Get | `GET /location/v1/points/{id}` | Point ID (for example `KRA010M`) |
-| Get Many | `GET /location/v1/points` | Return All / Limit (`page` from 1, `perPage` up to 1000). Filters: Country (ISO 3166-1 alpha-2), City, Postal Code, Administrative Area (each accepts a comma-separated list), Type (`APM` = parcel locker, `PUDO` = pick-up/drop-off point), Capabilities (`PARCEL_COLLECT`, `PARCEL_SEND`, `COOLED_DEPOSIT`), Updated From / Updated To (YYYY-MM-DD; Updated To only together with Updated From). Option: Language (`Accept-Language` header) |
-| Search Nearby | `GET /location/v1/points/search-by-location` | Search By: Coordinates (`latitude,longitude` → `relativePoint`) or Postal Code (`relativePostCode`), never both. Max Distance in metres (default 10000, max 50000), Limit, Country, Type, Capabilities |
+| Get | `GET /location/v1/points/{id}` | Point ID in the form `{country}_{name}` (for example `PL_KRA02APP`). Option: Language |
+| Get Many | `GET /location/v1/points` | Return All / Limit (`page` from 1, `perPage` up to 1000). Filters (query names `address.country`, `address.city`, `address.postalCode`, `address.administrativeArea`, `type`, `capabilities`, `updatedFrom`, `updatedTo`): Country (ISO 3166-1 alpha-2), City, Postal Code, Administrative Area (each accepts a comma-separated list), Type (`APM` = parcel locker, `PUDO` = pick-up/drop-off point), Capabilities (`PARCEL_COLLECT`, `PARCEL_SEND`, `COOLED_DEPOSIT`), Updated From / Updated To (YYYY-MM-DD; Updated To only together with Updated From; without Updated To, Updated From may be at most 3 days in the past). Option: Language (`Accept-Language` header) |
+| Search Nearby | `GET /location/v1/points/search-by-location` | Search By: Coordinates (`latitude,longitude` → `relativePoint`) or Postal Code (`relativePostCode`), never both. Max Distance in metres (default 10000, max 50000), Limit (`limit`; the endpoint is also paged with `page`/`perPage`), Country (`address.country`), Type, Capabilities. Option: Language. Each result has `distance` (metres) |
+
+Responses (checked in `points-v1.json` on 2026-10-26): lists return
+`{ count, page, perPage, totalPages, items[] }`; one point has `id`, `type`,
+`displayName`, `country`, `locationType`, `imageUrl`, `coordinates`,
+`location247`, `capabilities`, `address`, `description`/`description2`/
+`description3` (`{ content, translations }`) and `operatingHours`; Get adds
+`guaranteedLockerTemperatures`. More than 10 fields, so the node needs a
+Simplify toggle.
 
 ### 3.2 Tracking — Tracking API (`api:tracking:read`)
 
