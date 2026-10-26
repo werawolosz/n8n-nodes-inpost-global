@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: InPost API questions and access
+    url: https://developers.inpost-group.com/
+    about: Questions about your InPost account, credentials, scopes or contract go to InPost, not to this repository.
+  - name: n8n community forum
+    url: https://community.n8n.io/
+    about: General questions about building workflows in n8n.

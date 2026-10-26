@@ -24,6 +24,9 @@
 		"type": "git",
 		"url": "https://github.com/werawolosz/n8n-nodes-inpost-global.git"
 	},
+	"bugs": {
+		"url": "https://github.com/werawolosz/n8n-nodes-inpost-global/issues"
+	},
 	"scripts": {
 		"build": "n8n-node build",
 		"build:watch": "tsc --watch",

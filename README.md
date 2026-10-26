@@ -11,6 +11,7 @@ InPost is a parcel delivery company known for its parcel lockers (Paczkomaty). I
 [Credentials](#credentials)  
 [Compatibility](#compatibility)  
 [Usage](#usage)  
+[Feedback and contributing](#feedback-and-contributing)  
 [Resources](#resources)  
 [Version history](#version-history)  
 
@@ -129,6 +130,12 @@ Start with the **Stage (Sandbox)** environment: shipments created there are not 
 - **Retries**: for Shipment → Create, set **Deduplication ID** to a UUID stored with your order. If n8n retries the request, InPost does not create a second shipment.
 - **Pickup time zone**: Pickup From and Pickup To are read in the time zone of the workflow (**Workflow settings → Timezone**).
 - **When something is rejected**: the node checks common rules before it calls InPost and tells you which field to change. If InPost itself rejects the request, open the error details in n8n to see InPost's message for each field.
+
+## Feedback and contributing
+
+Found a bug or have an idea for the InPost node? [Open an issue](https://github.com/werawolosz/n8n-nodes-inpost-global/issues/new/choose) and choose **Bug report** or **Feature request**. Please never paste your client ID, client secret, tokens or customer data.
+
+Want to change the code yourself? Read [CONTRIBUTING.md](CONTRIBUTING.md) and open a pull request.
 
 ## Resources
 

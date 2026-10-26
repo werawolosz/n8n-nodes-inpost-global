@@ -1,0 +1,73 @@
+name: Bug report
+description: Something in the InPost node does not work as expected
+title: '[Bug]: '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this.
+        **Never paste your client ID, client secret, access tokens or customer data.** Replace them with `***`.
+  - type: dropdown
+    id: resource
+    attributes:
+      label: Resource
+      options:
+        - Point
+        - Tracking
+        - Shipment
+        - Pickup
+        - Credentials
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: operation
+    attributes:
+      label: Operation
+      placeholder: e.g. Create, Get Label, Search Nearby
+  - type: dropdown
+    id: environment
+    attributes:
+      label: InPost environment
+      options:
+        - Stage (Sandbox)
+        - Production
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect and what did you get instead?
+    validations:
+      required: true
+  - type: textarea
+    id: message
+    attributes:
+      label: Message from n8n
+      description: Copy the message and the error details shown by the node (without secrets).
+      render: text
+  - type: input
+    id: n8n-version
+    attributes:
+      label: n8n version
+      placeholder: e.g. 2.44.5
+    validations:
+      required: true
+  - type: input
+    id: node-version
+    attributes:
+      label: n8n-nodes-inpost-global version
+      placeholder: e.g. 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: hosting
+    attributes:
+      label: How do you run n8n?
+      options:
+        - n8n Cloud
+        - Self-hosted (Docker)
+        - Self-hosted (npm)
+        - Other

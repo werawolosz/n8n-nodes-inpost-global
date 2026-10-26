@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest a new operation, field or improvement for the InPost node
+title: '[Idea]: '
+labels: ['enhancement']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ideas are welcome. Tell us what you want to automate with InPost and what is missing.
+  - type: textarea
+    id: use-case
+    attributes:
+      label: What do you want to do?
+      description: Describe your workflow, for example "After an order in my shop, create a shipment and email the label".
+    validations:
+      required: true
+  - type: textarea
+    id: missing
+    attributes:
+      label: What is missing or could be better?
+      description: A new operation, a field, a clearer message, a different output, etc.
+    validations:
+      required: true
+  - type: input
+    id: api-link
+    attributes:
+      label: Link to the InPost API documentation (optional)
+      placeholder: e.g. https://developers.inpost-group.com/...
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Would you like to help?
+      options:
+        - label: I can test it on the InPost stage environment
+        - label: I would like to open a pull request
