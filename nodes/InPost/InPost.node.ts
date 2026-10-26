@@ -1,4 +1,5 @@
 import { NodeConnectionTypes, type INodeType, type INodeTypeDescription } from 'n8n-workflow';
+import { pointDescription } from './resources/point';
 
 export class InPost implements INodeType {
 	description: INodeTypeDescription = {
@@ -7,7 +8,7 @@ export class InPost implements INodeType {
 		icon: { light: 'file:../../icons/inpost.svg', dark: 'file:../../icons/inpost.dark.svg' },
 		group: ['transform'],
 		version: 1,
-		subtitle: 'Global API',
+		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		description: 'Find InPost points, track parcels, create shipments and book courier pickups',
 		defaults: {
 			name: 'InPost',
@@ -31,12 +32,19 @@ export class InPost implements INodeType {
 		},
 		properties: [
 			{
-				displayName:
-					'This node is in early development. Operations for points, tracking, shipments and pickups are coming in the next versions.',
-				name: 'notice',
-				type: 'notice',
-				default: '',
+				displayName: 'Resource',
+				name: 'resource',
+				type: 'options',
+				noDataExpression: true,
+				options: [
+					{
+						name: 'Point',
+						value: 'point',
+					},
+				],
+				default: 'point',
 			},
+			...pointDescription,
 		],
 	};
 }

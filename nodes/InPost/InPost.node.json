@@ -6,12 +6,12 @@
 	"resources": {
 		"credentialDocumentation": [
 			{
-				"url": "https://github.com/GITHUB_USER/n8n-nodes-inpost-global?tab=readme-ov-file#credentials"
+				"url": "https://github.com/werawolosz/n8n-nodes-inpost-global?tab=readme-ov-file#credentials"
 			}
 		],
 		"primaryDocumentation": [
 			{
-				"url": "https://github.com/GITHUB_USER/n8n-nodes-inpost-global?tab=readme-ov-file"
+				"url": "https://github.com/werawolosz/n8n-nodes-inpost-global?tab=readme-ov-file"
 			}
 		]
 	}
