@@ -42,6 +42,8 @@ Parcel tracking history from the InPost Tracking API. Needs the `api:tracking:re
 
 InPost keeps tracking data for 121 days. The meaning of each event code is listed in [InPost tracking events](https://developers.inpost-group.com/tracking-events). The `status` fields are filled only on the UK market. To track more than 10 parcels, pass them as separate input items: the node sends one request per item.
 
+If InPost returns no data for one of the numbers (a typo, a parcel of another organization, older than 121 days, or a new parcel without events yet), the node stops and names the missing numbers. To skip such numbers and keep going, set the node setting **On Error** to **Continue**.
+
 Shipments and pickups are coming in the next versions.
 
 ## Credentials

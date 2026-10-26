@@ -74,7 +74,12 @@ Notes (checked in `tracking-v1.json` on 2026-10-26):
   `ADDRESS`, `MPOK_POINT`.
 - Errors use RFC 9457 problem details (`type`, `title`, `status`, `detail`).
 - Event codes: https://developers.inpost-group.com/tracking-events
-- To check on stage: what an unknown tracking number returns.
+- Unknown numbers: the spec does not say what InPost returns for them. The
+  node compares the requested numbers with the returned parcels and stops with
+  a message naming the missing ones (users can choose On Error: Continue).
+  To check on stage: whether an unknown number is left out of `parcels`, comes
+  back with empty `events`, or causes a 4xx response (in that case n8n shows
+  InPost's own problem message instead).
 
 ### 3.3 Shipment — Shipping API v2
 
