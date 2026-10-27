@@ -48,6 +48,8 @@ If InPost returns no data for one of the numbers (a typo, a parcel of another or
 
 ### Shipment
 
+> **Beta:** the Shipment operations work only with an active logistics contract with InPost and have not been tested yet on an account that has one. Please report anything that does not work in [Issues](https://github.com/werawolosz/n8n-nodes-inpost-global/issues/new/choose).
+
 Shipments from the InPost Shipping API v2. Create and Get Label need the `api:shipments:write` scope, Get needs `api:shipments:read`. All three use the **Organization ID** from the credentials.
 
 - **Create**: create a shipment.
@@ -67,6 +69,8 @@ Creating shipments needs an active logistics contract with InPost (for example f
 Customs clearance, return address and RVM parcels are not supported yet.
 
 ### Pickup
+
+> **Beta:** the Pickup operations work only with an active logistics contract with InPost and have not been tested yet on an account that has one. Please report anything that does not work in [Issues](https://github.com/werawolosz/n8n-nodes-inpost-global/issues/new/choose).
 
 Courier pickups from the InPost One-time Pickups API. Create and Cancel need the `api:one-time-pickups:write` scope; Get, Get Many and Get Cut-Off Time need `api:one-time-pickups:read`. All operations except Get Cut-Off Time use the **Organization ID** from the credentials.
 
