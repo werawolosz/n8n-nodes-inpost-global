@@ -150,6 +150,6 @@ Want to change the code yourself? Read [CONTRIBUTING.md](CONTRIBUTING.md) and op
 
 ## Version history
 
-- 0.1.0 (unreleased): credentials for the InPost Global API; Point operations (Get, Get Many, Search Nearby); Tracking: Get Events; Shipment: Create, Get, Get Label; Pickup: Create, Get, Get Many, Cancel, Get Cut-Off Time.
+- 0.1.1 (2026-10-27): first release. Credentials for the InPost Global API; Point: Get, Get Many, Search Nearby; Tracking: Get Events. Beta (needs a logistics contract with InPost, not tested yet on such an account): Shipment: Create, Get, Get Label; Pickup: Create, Get, Get Many, Cancel, Get Cut-Off Time. Version 0.1.0 was never published.
 
 

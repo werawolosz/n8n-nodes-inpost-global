@@ -304,12 +304,26 @@ npm provenance.
 
 Still open before submitting to n8n:
 
-- Stage tests of M1–M5 (no stage credentials yet).
+- Stage tests (2026-10-27): M1, Points and Tracking pass. Create Shipment
+  and Create Pickup are blocked until InPost activates test logistics
+  services (§6); Shipment and Pickup are marked beta in the README.
 - Icon: official InPost logo (`icons/inpost-logo.svg`, dark:
   `icons/inpost-logo.dark.svg`); InPost's confirmation pending in JSD-1417442 (§6).
 - Resource Locator ("From list") is not used: Point ID, Tracking Number and
   Order ID are plain text fields. Pickup Order ID could get a list search
   later if reviewers ask.
-- Public GitHub repo `werawolosz/n8n-nodes-inpost-global`, npm Trusted
-  Publishing, first release, then `npx @n8n/scan-community-package
-  n8n-nodes-inpost-global`.
+- `npx @n8n/scan-community-package n8n-nodes-inpost-global` on the
+  published package.
+
+Releases:
+
+- 0.1.1 (2026-10-27, tag `0.1.1`): first npm release, published from the
+  maintainer's computer with `npm run release -- --publish`, so without
+  provenance. The `publish.yml` run for the tag fails because 0.1.1 is
+  already on npm; that is expected.
+- Public GitHub repo `werawolosz/n8n-nodes-inpost-global`; npm Trusted
+  Publisher is configured for it.
+- From 0.1.2 on, releases go through GitHub Actions (`publish.yml`, on a
+  `*.*.*` tag) with npm provenance; `npm run release` only bumps the
+  version, writes the changelog, tags and pushes (run it without
+  `--publish`).
