@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-inpost-global",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "n8n community node for the InPost Global API: parcel lockers and points, tracking, shipments, labels and courier pickups",
 	"license": "MIT",
 	"homepage": "https://github.com/werawolosz/n8n-nodes-inpost-global",
