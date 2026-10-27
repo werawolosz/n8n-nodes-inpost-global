@@ -5,6 +5,7 @@ import {
 	pointCountryFilter,
 	pointTypeFilter,
 } from '../../shared/descriptions';
+import { setPostalCodeCountry } from '../../shared/utils';
 
 const showOnlyForPointSearchNearby = {
 	operation: ['searchNearby'],
@@ -103,6 +104,27 @@ export const pointSearchNearbyDescription: INodeProperties[] = [
 		},
 	},
 	{
+		displayName: 'Country',
+		name: 'country',
+		type: 'string',
+		required: true,
+		default: '',
+		placeholder: 'e.g. PL',
+		description:
+			'Country of the postal code, as a two-letter code (ISO 3166-1 alpha-2). InPost needs exactly one country to search by postal code.',
+		displayOptions: {
+			show: {
+				...showOnlyForPointSearchNearby,
+				searchBy: ['postalCode'],
+			},
+		},
+		routing: {
+			send: {
+				preSend: [setPostalCodeCountry],
+			},
+		},
+	},
+	{
 		displayName: 'Max Distance (Meters)',
 		name: 'maxDistance',
 		type: 'number',
@@ -156,7 +178,12 @@ export const pointSearchNearbyDescription: INodeProperties[] = [
 		displayOptions: {
 			show: showOnlyForPointSearchNearby,
 		},
-		options: [pointCapabilitiesFilter, pointCountryFilter, pointTypeFilter],
+		options: [
+			pointCapabilitiesFilter,
+			// With Postal Code the required Country field above sends the country instead
+			{ ...pointCountryFilter, displayOptions: { show: { '/searchBy': ['coordinates'] } } },
+			pointTypeFilter,
+		],
 	},
 	{
 		displayName: 'Options',

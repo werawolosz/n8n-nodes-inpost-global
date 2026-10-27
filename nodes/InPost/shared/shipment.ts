@@ -71,6 +71,34 @@ function compact(object: IDataObject): IDataObject {
 	return result;
 }
 
+const REQUIRED_PARTY_FIELDS: Array<[keyof Party, string]> = [
+	['firstName', 'First Name'],
+	['lastName', 'Last Name'],
+	['email', 'Email'],
+	['phone', 'Phone'],
+];
+
+/** Stops before the request when the sender or recipient misses a field that InPost requires. */
+function requireParty(
+	context: IExecuteSingleFunctions,
+	party: Party,
+	label: 'Sender' | 'Recipient',
+): void {
+	const missing = REQUIRED_PARTY_FIELDS.filter(
+		([field]) => String(party[field] ?? '').trim() === '',
+	).map(([, name]) => `'${name}'`);
+	if (missing.length > 0) {
+		throw new NodeOperationError(
+			context.getNode(),
+			`The ${label.toLowerCase()} has no ${missing.join(', ')}`,
+			{
+				itemIndex: context.getItemIndex(),
+				description: `InPost needs the first name, last name, email and phone of both the sender and the recipient. Add the missing fields in '${label}'.`,
+			},
+		);
+	}
+}
+
 function buildParty(party: Party): IDataObject {
 	return compact({
 		firstName: party.firstName,
@@ -113,7 +141,7 @@ export async function requireOrganizationId(
 		throw new NodeOperationError(this.getNode(), 'The credentials have no Organization ID', {
 			itemIndex: this.getItemIndex(),
 			description:
-				"Open the InPost Global OAuth2 API credentials and fill in 'Organization ID'. You get it from InPost when your account is set up, or in the Merchant Portal.",
+				"Open the InPost Global OAuth2 API credentials and fill in 'Organization ID'. Copy it from the API tab of the InPost Merchant Portal, not from the page address.",
 		});
 	}
 	return requestOptions;
@@ -261,9 +289,14 @@ export function buildShipmentBody(
 		});
 	}
 
+	const sender = this.getNodeParameter('sender', {}) as Party;
+	const recipient = this.getNodeParameter('recipient', {}) as Party;
+	requireParty(this, sender, 'Sender');
+	requireParty(this, recipient, 'Recipient');
+
 	const body: IDataObject = {
-		sender: buildParty(this.getNodeParameter('sender', {}) as Party),
-		recipient: buildParty(this.getNodeParameter('recipient', {}) as Party),
+		sender: buildParty(sender),
+		recipient: buildParty(recipient),
 		origin,
 		destination,
 		parcels,

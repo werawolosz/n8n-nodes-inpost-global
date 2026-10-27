@@ -11,6 +11,14 @@ const DAY = 24 * 60 * MINUTE;
 const MIN_WINDOW_MINUTES = 120;
 const MAX_DAYS_AHEAD = 7;
 const OPEN_STATUSES = ['CREATED', 'PENDING', 'RESCHEDULED'];
+/** Pickups exist only in Poland, so the pickup window is always read in Polish time. */
+export const PICKUP_TIME_ZONE = 'Europe/Warsaw';
+const REQUIRED_ADDRESS_FIELDS: Array<[keyof PickupAddress, string]> = [
+	['street', 'Street'],
+	['houseNumber', 'House Number'],
+	['city', 'City'],
+	['postalCode', 'Postal Code'],
+];
 
 type WallTime = {
 	year: number;
@@ -147,10 +155,25 @@ function compact(object: IDataObject): IDataObject {
 
 export function buildPickupBody(this: IExecuteSingleFunctions, now = Date.now()): IDataObject {
 	const node = this.getNode();
-	const timeZone = this.getTimezone();
+	const timeZone = PICKUP_TIME_ZONE;
 
 	const address = this.getNodeParameter('pickupAddress', {}) as PickupAddress;
 	const contact = this.getNodeParameter('contactPerson', {}) as ContactPerson;
+
+	const missingAddressFields = REQUIRED_ADDRESS_FIELDS.filter(
+		([field]) => String(address[field] ?? '').trim() === '',
+	).map(([, name]) => `'${name}'`);
+	if (missingAddressFields.length > 0) {
+		throw new NodeOperationError(
+			node,
+			`The pickup address has no ${missingAddressFields.join(', ')}`,
+			{
+				itemIndex: this.getItemIndex(),
+				description:
+					"InPost needs the street, house number, city and postal code of the pickup address. Add the missing fields in 'Pickup Address'.",
+			},
+		);
+	}
 
 	const phone = parsePolishPhone(String(contact.phone ?? ''));
 	if (!phone) {
@@ -172,7 +195,7 @@ export function buildPickupBody(this: IExecuteSingleFunctions, now = Date.now())
 	if (from.date !== to.date) {
 		throw new NodeOperationError(node, 'The pickup window must start and end on the same day', {
 			itemIndex: this.getItemIndex(),
-			description: `'Pickup From' is on ${from.date} and 'Pickup To' is on ${to.date}. Choose times on one day, usually between 09:00 and 18:00.`,
+			description: `'Pickup From' is on ${from.date} and 'Pickup To' is on ${to.date}. Choose times on one day.`,
 		});
 	}
 	if (to.timestamp - from.timestamp < MIN_WINDOW_MINUTES * MINUTE) {

@@ -8,7 +8,7 @@ export class InPost implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'InPost',
 		name: 'inPost',
-		icon: { light: 'file:../../icons/inpost.svg', dark: 'file:../../icons/inpost.dark.svg' },
+		icon: { light: 'file:../../icons/inpost-logo.svg', dark: 'file:../../icons/inpost-logo.dark.svg' },
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',

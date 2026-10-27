@@ -7,7 +7,7 @@ const showOnlyForPickupCreate = {
 
 export const pickupCreateDescription: INodeProperties[] = [
 	{
-		displayName: 'Pickups are available in Poland only and need an active logistics contract with InPost. Book up to 7 days ahead, before the cut-off time of the postal code (see the Get Cut-Off Time operation).',
+		displayName: 'Pickups are available in Poland only and need an active logistics contract with InPost. Book up to 7 days ahead, before the cut-off time of the postal code (see the Get Cut-Off Time operation). Pickup times are in Polish time.',
 		name: 'pickupNotice',
 		type: 'notice',
 		default: '',
@@ -122,7 +122,7 @@ export const pickupCreateDescription: INodeProperties[] = [
 		required: true,
 		default: '',
 		description:
-			'Start of the pickup window, in the time zone of the workflow. The window is on one day, usually between 09:00 and 18:00.',
+			'Start of the pickup window, in Polish time (Europe/Warsaw) whatever the time zone of the workflow. The window is on one day; courier hours depend on the address and the day.',
 		displayOptions: {
 			show: showOnlyForPickupCreate,
 		},
@@ -133,7 +133,7 @@ export const pickupCreateDescription: INodeProperties[] = [
 		type: 'dateTime',
 		required: true,
 		default: '',
-		description: 'End of the pickup window, at least 2 hours after Pickup From',
+		description: 'End of the pickup window, in Polish time, at least 2 hours after Pickup From',
 		displayOptions: {
 			show: showOnlyForPickupCreate,
 		},

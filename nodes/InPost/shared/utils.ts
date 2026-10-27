@@ -56,6 +56,30 @@ function parseTrackingNumbers(input: unknown): string[] {
 	];
 }
 
+/**
+ * Sends the Search Nearby Country as `address.country`. With `relativePostCode` InPost requires
+ * exactly one country (400 `only_one_country_must_be_selected`), which the OpenAPI spec does not say.
+ */
+export async function setPostalCodeCountry(
+	this: IExecuteSingleFunctions,
+	requestOptions: IHttpRequestOptions,
+): Promise<IHttpRequestOptions> {
+	const country = String(this.getNodeParameter('country', '')).trim().toUpperCase();
+
+	if (!/^[A-Z]{2}$/.test(country)) {
+		throw new NodeOperationError(this.getNode(), 'Searching by postal code needs exactly one country', {
+			itemIndex: this.getItemIndex(),
+			description:
+				"Enter one two-letter country code in 'Country', for example PL. To search in several countries, use one input item per country.",
+		});
+	}
+
+	return {
+		...requestOptions,
+		qs: { ...requestOptions.qs, 'address.country': country },
+	};
+}
+
 /** Turns the comma-separated Tracking Numbers field into a repeated `trackingNumbers` query parameter. */
 export async function setTrackingNumbers(
 	this: IExecuteSingleFunctions,

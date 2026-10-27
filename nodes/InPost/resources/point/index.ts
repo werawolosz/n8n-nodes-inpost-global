@@ -1,4 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
+import { checkInPostResponse, IGNORE_STATUS_ERRORS } from '../../shared/errors';
 import { simplifyPoints } from '../../shared/utils';
 import { pointGetDescription } from './get';
 import { pointGetManyDescription } from './getMany';
@@ -26,10 +27,11 @@ export const pointDescription: INodeProperties[] = [
 				routing: {
 					request: {
 						method: 'GET',
+						ignoreHttpStatusErrors: IGNORE_STATUS_ERRORS,
 						url: '=/location/v1/points/{{ encodeURIComponent($parameter.pointId) }}',
 					},
 					output: {
-						postReceive: [simplifyPoints],
+						postReceive: [checkInPostResponse, simplifyPoints],
 					},
 				},
 			},
@@ -41,10 +43,12 @@ export const pointDescription: INodeProperties[] = [
 				routing: {
 					request: {
 						method: 'GET',
+						ignoreHttpStatusErrors: IGNORE_STATUS_ERRORS,
 						url: '/location/v1/points',
 					},
 					output: {
 						postReceive: [
+							checkInPostResponse,
 							{
 								type: 'rootProperty',
 								properties: {
@@ -64,10 +68,12 @@ export const pointDescription: INodeProperties[] = [
 				routing: {
 					request: {
 						method: 'GET',
+						ignoreHttpStatusErrors: IGNORE_STATUS_ERRORS,
 						url: '/location/v1/points/search-by-location',
 					},
 					output: {
 						postReceive: [
+							checkInPostResponse,
 							{
 								type: 'rootProperty',
 								properties: {

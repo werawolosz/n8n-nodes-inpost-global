@@ -1,4 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
+import { checkInPostResponse, IGNORE_STATUS_ERRORS } from '../../shared/errors';
 import {
 	cancelPickupOutput,
 	cutoffTimeOutput,
@@ -36,13 +37,14 @@ export const pickupDescription: INodeProperties[] = [
 				routing: {
 					request: {
 						method: 'PUT',
+						ignoreHttpStatusErrors: IGNORE_STATUS_ERRORS,
 						url: `${pickupUrl}/cancel`,
 					},
 					send: {
 						preSend: [requireOrganizationId],
 					},
 					output: {
-						postReceive: [cancelPickupOutput],
+						postReceive: [checkInPostResponse, cancelPickupOutput],
 					},
 				},
 			},
@@ -54,10 +56,14 @@ export const pickupDescription: INodeProperties[] = [
 				routing: {
 					request: {
 						method: 'POST',
+						ignoreHttpStatusErrors: IGNORE_STATUS_ERRORS,
 						url: pickupsUrl,
 					},
 					send: {
 						preSend: [requireOrganizationId, setPickupBody],
+					},
+					output: {
+						postReceive: [checkInPostResponse],
 					},
 				},
 			},
@@ -69,13 +75,14 @@ export const pickupDescription: INodeProperties[] = [
 				routing: {
 					request: {
 						method: 'GET',
+						ignoreHttpStatusErrors: IGNORE_STATUS_ERRORS,
 						url: pickupUrl,
 					},
 					send: {
 						preSend: [requireOrganizationId],
 					},
 					output: {
-						postReceive: [simplifyPickups],
+						postReceive: [checkInPostResponse, simplifyPickups],
 					},
 				},
 			},
@@ -87,13 +94,14 @@ export const pickupDescription: INodeProperties[] = [
 				routing: {
 					request: {
 						method: 'GET',
+						ignoreHttpStatusErrors: IGNORE_STATUS_ERRORS,
 						url: '/pickups/v1/cutoff-time',
 						qs: {
 							countryCode: 'PL',
 						},
 					},
 					output: {
-						postReceive: [cutoffTimeOutput],
+						postReceive: [checkInPostResponse, cutoffTimeOutput],
 					},
 				},
 			},
@@ -105,6 +113,7 @@ export const pickupDescription: INodeProperties[] = [
 				routing: {
 					request: {
 						method: 'GET',
+						ignoreHttpStatusErrors: IGNORE_STATUS_ERRORS,
 						url: pickupsUrl,
 					},
 					send: {
@@ -112,6 +121,7 @@ export const pickupDescription: INodeProperties[] = [
 					},
 					output: {
 						postReceive: [
+							checkInPostResponse,
 							{
 								type: 'rootProperty',
 								properties: {

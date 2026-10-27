@@ -32,7 +32,7 @@ Parcel lockers (APM) and ParcelPoints (PUDO) from the InPost Location API. Needs
   - Type: Parcel Locker (APM), ParcelPoint (PUDO)
   - Capabilities: Collect Parcels, Send Parcels, Cooled Deposit
   - Updated From / Updated To: points changed in a date range. Without Updated To, Updated From can be at most 3 days in the past.
-- **Search Nearby**: find the points closest to coordinates (latitude and longitude) or to a postal code, within a maximum distance in meters (default 10000, maximum 50000). Each result includes `distance` in meters. Filters: Country, Type, Capabilities.
+- **Search Nearby**: find the points closest to coordinates (latitude and longitude) or to a postal code, within a maximum distance in meters (default 10000, maximum 50000). Searching by postal code also needs the **Country** of that postal code: exactly one two-letter code, for example `PL`. Each result includes `distance` in meters. Filters: Type, Capabilities and, when searching by coordinates, Country.
 
 All Point operations return one item per point. **Simplify** (on by default) keeps the main fields: `id`, `type`, `displayName`, `locationType`, `location247`, `capabilities`, `address`, `coordinates`, `description` and, for Search Nearby, `distance`. Turn it off to get the full response, including opening hours and description translations. The **Language** option (for example `pl-PL`) sets the language of the point descriptions.
 
@@ -60,7 +60,9 @@ Shipments from the InPost Shipping API v2. Create and Get Label need the `api:sh
 - **Get**: get the parcel numbers and routing of a shipment by its tracking number.
 - **Get Label**: download the label as a file: PDF A6 (default), PDF A4, ZPL 203 dpi, ZPL 300 dpi or EPL2 203 dpi (EPL2 for domestic shipments within Poland only). The file goes to the binary field set in **Put Output File in Field** (default `data`) and is named `label-<tracking number>.pdf` (or `.zpl` / `.epl`).
 
-Most additional services work only for courier shipments from address to address within Poland, and their availability depends on your InPost contract. A courier shipment with Cash on Delivery needs Additional Cover of at least the same amount. When InPost rejects a shipment, the error details in n8n show which fields to fix.
+Most additional services work only for courier shipments from address to address within Poland, and their availability depends on your InPost contract. A courier shipment with Cash on Delivery needs Additional Cover of at least the same amount. Sender and Recipient both need a first name, last name, email and phone; the node checks this before it calls InPost.
+
+Creating shipments needs an active logistics contract with InPost (for example for parcel lockers and courier). Without it InPost answers `403 Access forbidden for this token`, even when the shipment data is valid.
 
 Customs clearance, return address and RVM parcels are not supported yet.
 
@@ -68,12 +70,12 @@ Customs clearance, return address and RVM parcels are not supported yet.
 
 Courier pickups from the InPost One-time Pickups API. Create and Cancel need the `api:one-time-pickups:write` scope; Get, Get Many and Get Cut-Off Time need `api:one-time-pickups:read`. All operations except Get Cut-Off Time use the **Organization ID** from the credentials.
 
-Pickups are available in Poland only and need an active logistics contract with InPost.
+Pickups are available in Poland only and need an active logistics contract with InPost. Without it InPost answers `Payer account was not found`, even when the pickup data is valid.
 
 - **Create**: book a courier to collect items from an address.
-  - **Pickup Address**: street, house number, city and postal code (required), flat number and a location description with tips for the courier.
+  - **Pickup Address**: street, house number, city and postal code (required, checked before the request), flat number and a location description with tips for the courier.
   - **Contact Person**: first name, last name, email and a Polish phone number (9 digits, with or without `+48`).
-  - **Pickup From** / **Pickup To**: the pickup window, read in the time zone of the workflow. It must be on one day (usually between 09:00 and 18:00), at least 2 hours long, not over yet, and at most 7 days ahead. The node checks these rules before it sends the request.
+  - **Pickup From** / **Pickup To**: the pickup window, always read in Polish time (Europe/Warsaw), whatever the time zone of the workflow. It must be on one day, at least 2 hours long, not over yet, and at most 7 days ahead; the node checks these rules before it sends the request. The courier's working hours depend on the address and the day (for example 09:00–20:00 or 08:00–15:00), so the node does not check them: if the window does not fit, the node shows InPost's message.
   - **Item Type**: Parcels or Pallets (with count and total weight), or Recyclable Packaging (with count, total volume in liters and the tracking numbers of the packaging).
   - **Custom References**: up to 3 key-value pairs.
   - Returns the pickup ID, the carrier reference and the creation time.
@@ -90,7 +92,7 @@ You cannot book a second pickup for the same address and time unless the locatio
 
 The node uses OAuth 2.1 with the client credentials grant. n8n fetches and refreshes the access token for you.
 
-Prerequisites: an InPost Global API client. Ask the InPost Integration Team (or use the merchant portal) for a client ID, a client secret, the list of scopes your client has and your organization ID.
+Prerequisites: an InPost Global API client. Ask the InPost Integration Team (or use the merchant portal) for a client ID, a client secret, the list of scopes your client has and your organization ID. Shipments and pickups also need an active logistics contract with InPost; Points and Tracking work without one.
 
 In n8n, create an **InPost Global OAuth2 API** credential and fill in:
 
@@ -99,7 +101,7 @@ In n8n, create an **InPost Global OAuth2 API** credential and fill in:
 | Environment | **Stage (Sandbox)** for testing, **Production** for real shipments. It selects the token URL and the API address |
 | Client ID | Your client ID |
 | Client Secret | Your client secret |
-| Organization ID | Your merchant organization ID. Shipments and pickups need it |
+| Organization ID | The organization ID shown on the **API** tab of the InPost Merchant Portal (in the Polish portal: **ID organizacji**), for example `d38d503c-…`. Do not use the ID from the portal's page address. Shipments and pickups need it |
 | Scope | All six scopes are filled in by default. Remove the ones your client does not have |
 
 Start with the stage environment and switch to production when your workflow works.
@@ -128,8 +130,8 @@ Start with the **Stage (Sandbox)** environment: shipments created there are not 
 - **Point IDs**: the Point operations return IDs such as `PL_KRA09N`. You can pass them straight to **Shipment → Create**; the node removes the country prefix.
 - **Many tracking numbers**: Tracking → Get Events accepts up to 10 numbers per item. For longer lists, pass one number per item, for example from a spreadsheet.
 - **Retries**: for Shipment → Create, set **Deduplication ID** to a UUID stored with your order. If n8n retries the request, InPost does not create a second shipment.
-- **Pickup time zone**: Pickup From and Pickup To are read in the time zone of the workflow (**Workflow settings → Timezone**).
-- **When something is rejected**: the node checks common rules before it calls InPost and tells you which field to change. If InPost itself rejects the request, open the error details in n8n to see InPost's message for each field.
+- **Pickup time zone**: Pickup From and Pickup To are always read in Polish time (Europe/Warsaw). A value with an explicit offset, such as `2026-10-28T09:00:00+01:00` or one from `{{ $now }}`, keeps its moment and is converted to Polish time.
+- **When something is rejected**: the node checks common rules before it calls InPost and tells you which field to change. If InPost itself rejects the request, the node shows InPost's title and detail and lists the fields to fix, for example `destination.pointId: not_found`. For 403 on shipments and `Payer account was not found` on pickups, it reminds you that the account needs a logistics contract with InPost.
 
 ## Feedback and contributing
 

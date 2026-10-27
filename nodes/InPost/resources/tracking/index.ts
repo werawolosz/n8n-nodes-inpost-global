@@ -1,4 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
+import { checkInPostResponse, IGNORE_STATUS_ERRORS } from '../../shared/errors';
 import { setTrackingNumbers, splitParcels } from '../../shared/utils';
 import { trackingGetEventsDescription } from './getEvents';
 
@@ -24,13 +25,14 @@ export const trackingDescription: INodeProperties[] = [
 				routing: {
 					request: {
 						method: 'GET',
+						ignoreHttpStatusErrors: IGNORE_STATUS_ERRORS,
 						url: '/tracking/v1/parcels',
 					},
 					send: {
 						preSend: [setTrackingNumbers],
 					},
 					output: {
-						postReceive: [splitParcels],
+						postReceive: [checkInPostResponse, splitParcels],
 					},
 				},
 			},

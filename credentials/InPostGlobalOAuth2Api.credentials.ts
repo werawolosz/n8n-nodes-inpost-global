@@ -12,7 +12,7 @@ export class InPostGlobalOAuth2Api implements ICredentialType {
 
 	displayName = 'InPost Global OAuth2 API';
 
-	icon: Icon = { light: 'file:../icons/inpost.svg', dark: 'file:../icons/inpost.dark.svg' };
+	icon: Icon = { light: 'file:../icons/inpost-logo.svg', dark: 'file:../icons/inpost-logo.dark.svg' };
 
 	documentationUrl = 'https://github.com/werawolosz/n8n-nodes-inpost-global?tab=readme-ov-file#credentials';
 
@@ -40,7 +40,7 @@ export class InPostGlobalOAuth2Api implements ICredentialType {
 			type: 'string',
 			default: '',
 			description:
-				'Your merchant organization ID from InPost. Shipments and pickups need it.',
+				'The organization ID from the API tab of the InPost Merchant Portal, not the ID from the page address. Shipments and pickups need it.',
 		},
 		{
 			displayName: 'Grant Type',

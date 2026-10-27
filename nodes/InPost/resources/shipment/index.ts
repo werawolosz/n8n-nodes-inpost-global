@@ -1,4 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
+import { checkInPostResponse, IGNORE_STATUS_ERRORS } from '../../shared/errors';
 import { labelToBinary, requireOrganizationId, setShipmentBody } from '../../shared/shipment';
 import { shipmentCreateDescription } from './create';
 import { shipmentTrackingNumberField } from './get';
@@ -29,10 +30,14 @@ export const shipmentDescription: INodeProperties[] = [
 				routing: {
 					request: {
 						method: 'POST',
+						ignoreHttpStatusErrors: IGNORE_STATUS_ERRORS,
 						url: shipmentsUrl,
 					},
 					send: {
 						preSend: [requireOrganizationId, setShipmentBody],
+					},
+					output: {
+						postReceive: [checkInPostResponse],
 					},
 				},
 			},
@@ -44,10 +49,14 @@ export const shipmentDescription: INodeProperties[] = [
 				routing: {
 					request: {
 						method: 'GET',
+						ignoreHttpStatusErrors: IGNORE_STATUS_ERRORS,
 						url: `${shipmentsUrl}/{{ encodeURIComponent(String($parameter.trackingNumber).trim()) }}`,
 					},
 					send: {
 						preSend: [requireOrganizationId],
+					},
+					output: {
+						postReceive: [checkInPostResponse],
 					},
 				},
 			},
@@ -59,13 +68,14 @@ export const shipmentDescription: INodeProperties[] = [
 				routing: {
 					request: {
 						method: 'GET',
+						ignoreHttpStatusErrors: IGNORE_STATUS_ERRORS,
 						url: `${shipmentsUrl}/{{ encodeURIComponent(String($parameter.trackingNumber).trim()) }}/label`,
 					},
 					send: {
 						preSend: [requireOrganizationId],
 					},
 					output: {
-						postReceive: [labelToBinary],
+						postReceive: [checkInPostResponse, labelToBinary],
 					},
 				},
 			},

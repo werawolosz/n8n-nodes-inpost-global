@@ -19,7 +19,7 @@ file, the spec wins — update this file.
 | Environment | options: Stage (Sandbox) / Production | Default Stage. Drives the token URL and the API base URL |
 | Client ID | string | Issued by the InPost Integration Team or the merchant portal |
 | Client Secret | password | |
-| Organization ID | string | Needed by Shipment and Pickup |
+| Organization ID | string | Needed by Shipment and Pickup. Stage test (2026-10-27): the working value is "ID organizacji" on the API tab of the Merchant Portal, not the ID in the portal's page address |
 | Scope | string | Default: all six scopes, space-separated. The user deletes scopes their client does not have |
 
 Implementation notes:
@@ -40,7 +40,7 @@ Implementation notes:
 | --- | --- | --- |
 | Get | `GET /location/v1/points/{id}` | Point ID in the form `{country}_{name}` (for example `PL_KRA02APP`). Option: Language |
 | Get Many | `GET /location/v1/points` | Return All / Limit (`page` from 1, `perPage` up to 1000). Filters (query names `address.country`, `address.city`, `address.postalCode`, `address.administrativeArea`, `type`, `capabilities`, `updatedFrom`, `updatedTo`): Country (ISO 3166-1 alpha-2), City, Postal Code, Administrative Area (each accepts a comma-separated list), Type (`APM` = parcel locker, `PUDO` = pick-up/drop-off point), Capabilities (`PARCEL_COLLECT`, `PARCEL_SEND`, `COOLED_DEPOSIT`), Updated From / Updated To (YYYY-MM-DD; Updated To only together with Updated From; without Updated To, Updated From may be at most 3 days in the past). Option: Language (`Accept-Language` header) |
-| Search Nearby | `GET /location/v1/points/search-by-location` | Search By: Coordinates (`latitude,longitude` → `relativePoint`) or Postal Code (`relativePostCode`), never both. Max Distance in metres (default 10000, max 50000), Limit (`limit`; the endpoint is also paged with `page`/`perPage`), Country (`address.country`), Type, Capabilities. Option: Language. Each result has `distance` (metres) |
+| Search Nearby | `GET /location/v1/points/search-by-location` | Search By: Coordinates (`latitude,longitude` → `relativePoint`) or Postal Code (`relativePostCode`), never both. With Postal Code a required Country field (`address.country`, exactly one ISO 3166-1 alpha-2 code, checked before the request) sits next to Postal Code; the Country filter is shown only with Coordinates, so the country cannot be sent twice. Stage (2026-10-27) answers `relativePostCode` without exactly one country with 400 `only_one_country_must_be_selected` ("Select a country to filter by postcode."); `points-v1.json` marks `address.country` optional and does not mention this. Max Distance in metres (default 10000, max 50000), Limit (`limit`; the endpoint is also paged with `page`/`perPage`), Type, Capabilities. Option: Language. Each result has `distance` (metres) |
 
 Responses (checked in `points-v1.json` on 2026-10-26): lists return
 `{ count, page, perPage, totalPages, items[] }`; one point has `id`, `type`,
@@ -153,9 +153,16 @@ Rules from the spec (checked 2026-10-26), enforced or hinted in the node:
   are `customsClearance`, RVM parcels and `remarks` (label print fields).
 - Most value-added services are PL-domestic, courier address-to-address only;
   unavailable ones come back as `valueAddedServices.<id>: ["unavailable"]`.
-- 400 responses carry an `errors` object (field → messages). n8n shows the
-  title and the full response in the error details. To check on stage whether
-  that is readable enough.
+- 400 responses carry an `errors` object (field → messages). Stage test
+  (2026-10-27): n8n's generic "Bad request" / "Forbidden" / "could not be
+  found" hid them, so every operation sets `ignoreHttpStatusErrors` (except
+  401, which must still throw so n8n refreshes the token) and runs
+  `checkInPostResponse` (`shared/errors.ts`) first in `postReceive`. It shows
+  `title` as the message and `detail` plus the field list in the description.
+- Without a logistics contract, Create Shipment answers 403 "Access forbidden
+  for this token." even for valid data (stage, 2026-10-27); the node adds a
+  contract hint. Get / Get Label 404 → "no shipment with tracking number …".
+- Sender and Recipient need first name, last name, email and phone (node checks).
 
 Get Label:
 
@@ -195,8 +202,9 @@ Create — request body:
 - `references.custom` (optional).
 
 Business rules to show as hints: Poland only; the merchant needs an active
-logistics contract; book up to 7 days ahead; the window is on one day, usually
-09:00–18:00; `to` is at least 120 minutes after `from` and after the request
+logistics contract; book up to 7 days ahead; the window is on one day;
+courier hours depend on address and day (stage showed 09:00–20:00 and
+08:00–15:00), so the node does not check them and shows InPost's message; `to` is at least 120 minutes after `from` and after the request
 time; send before the postcode's cut-off; no second pickup for the same address
 and time unless the location description differs.
 
@@ -211,8 +219,15 @@ Checked in `one-time-pickups-v3.json` on 2026-10-26:
 - `phone.prefix` must be `+48` (Polish numbers only). The node has one
   Phone field and splits it (accepts `512345678`, `+48 512 345 678`,
   `0048…`).
-- `pickupTime` needs a date-time with an offset. The node reads the date
-  pickers in the workflow time zone and sends e.g. `2026-10-28T09:00:00+01:00`.
+- `pickupTime` needs a date-time with an offset. The node always reads the
+  date pickers in Polish time (Europe/Warsaw), whatever the workflow time zone
+  (stage, 2026-10-27: with the default America/New_York, InPost rejected the
+  hours), and sends e.g. `2026-10-28T09:00:00+01:00`. Values with an offset
+  keep their moment.
+- The node checks street, house number, city and postal code before the request.
+- Without a logistics contract, Create answers 400
+  `ILS.PayerNotFoundException` "Payer account was not found." (stage,
+  2026-10-27); the node adds a contract hint.
   It stops early when the window spans two days, is shorter than 120 minutes,
   is already over, or starts more than 7 days ahead.
 - Get Many: `page` is zero-based, page size is `size`; the response is
@@ -258,11 +273,23 @@ Checked in `one-time-pickups-v3.json` on 2026-10-26:
   client?
 - Which token URL applies to pickups: `api.inpost-group.com` or
   `account.inpost-group.com`?
-- Does our client have all six scopes, and what is our Organization ID?
+- Does our client have all six scopes? (Organization ID: found on the API tab
+  of the Merchant Portal.)
+- Can InPost activate test logistics services (parcel locker 24/7 and courier)
+  on stage for an account without a contract? Asked on 2026-10-27; Create
+  Shipment and Create Pickup are blocked until then.
 - May the node use the InPost logo as its icon under InPost's brand rules?
+  The node already uses the official logo (files from inpost.pl/do-pobrania,
+  fitted into a square: `icons/inpost-logo.svg` and
+  `icons/inpost-logo.dark.svg`); waiting for InPost's confirmation in ticket
+  JSD-1417442.
 - `shipping-v32.json` declares only a `Bearer` security scheme, but its
   operations reference an undefined `oauth2` scheme. We assume the same OAuth2
   token as the other APIs (checked 2026-10-21; confirm on stage in M4).
+- Search by location with `relativePostCode` needs exactly one
+  `address.country` on stage (400 `only_one_country_must_be_selected`), but
+  `points-v1.json` does not say so. Does production behave the same, and will
+  the spec be updated?
 
 ## 7. Verification status (M6, 2026-10-26)
 
@@ -278,7 +305,8 @@ npm provenance.
 Still open before submitting to n8n:
 
 - Stage tests of M1–M5 (no stage credentials yet).
-- Icon: neutral parcel icon until InPost answers the logo question (§6).
+- Icon: official InPost logo (`icons/inpost-logo.svg`, dark:
+  `icons/inpost-logo.dark.svg`); InPost's confirmation pending in JSD-1417442 (§6).
 - Resource Locator ("From list") is not used: Point ID, Tracking Number and
   Order ID are plain text fields. Pickup Order ID could get a list search
   later if reviewers ask.
